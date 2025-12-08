@@ -1,0 +1,49 @@
+{
+  "name": "messaging-platform",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon --watch src src/server.js",
+    "start": "node src/server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shivani16kulkarni/Messaging-Platform.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shivani16kulkarni/Messaging-Platform/issues"
+  },
+  "homepage": "https://github.com/shivani16kulkarni/Messaging-Platform#readme",
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-node": "^11.1.0",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.4",
+    "prisma": "^7.1.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.1.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "imports": {
+    "#middleware/*": "./src/middleware/*",
+    "#controllers/*": "./src/controllers/*",
+    "#routes/*": "./src/routes/*",
+    "#models/*": "./src/models/*",
+    "#utils/*": "./src/utils/*",
+    "#config/*": "./src/config/*"
+  }
+}
