@@ -31,19 +31,25 @@
     "prisma": "^7.1.0"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.16.3"
   },
   "imports": {
+    "#src/*": "./src/*",
     "#middleware/*": "./src/middleware/*",
     "#controllers/*": "./src/controllers/*",
     "#routes/*": "./src/routes/*",
     "#models/*": "./src/models/*",
     "#utils/*": "./src/utils/*",
-    "#config/*": "./src/config/*"
+    "#config/*": "./src/config/*",
+    "#db/*": "./src/db/*",
+    "#generated/*": "./src/generated/*",
+    "#prisma/*": "./prisma/*"
   }
 }
