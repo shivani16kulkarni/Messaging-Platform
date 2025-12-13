@@ -1,4 +1,4 @@
-export default function errorHandler(err, req, res, next) {
+export default function errorHandler(err, req, res) {
   const status = err.status || err.statusCode || 500;
 
   const isDev = process.env.NODE_ENV !== "production";

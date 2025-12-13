@@ -1,33 +1,82 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+provider = "prisma-client"
+output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+provider = "postgresql"
 }
 
 model User {
-  id              String    @id @default(cuid())
-  email           String    @unique
-  passwordHash    String
-  displayName     String
-  isActive        Boolean   @default(true)
-  emailVerifiedAt DateTime?
+id              String    @id @default(cuid())
+email           String    @unique
+passwordHash    String
+displayName     String
+isActive        Boolean   @default(true)
+emailVerifiedAt DateTime?
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+createdAt       DateTime  @default(now())
+updatedAt       DateTime  @updatedAt
 
-  refreshTokens RefreshToken[]
+refreshTokens RefreshToken[]
+messages Message[]
+participants Participant[]
 }
 
 model RefreshToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  revokedAt DateTime?
-  replacedBy String?
+id        String   @id @default(cuid())
+token     String   @unique
+userId    String
+user      User     @relation(fields: [userId], references: [id])
+createdAt DateTime @default(now())
+expiresAt DateTime
+revokedAt DateTime?
+replacedBy String?
+}
+
+model Conversation{
+id        String    @id @default(cuid())
+name      String?
+imageUrl  String?
+createdAt DateTime  @default(now())
+updatedAt DateTime  @updatedAt
+
+messages Message[]
+participants Participant[]
+}
+
+model Message{
+id           String       @id @default(cuid())
+content      String
+
+createdAt    DateTime     @default(now())
+conversationId String
+conversation Conversation @relation(fields: [conversationId], references: [id])
+
+userId       String
+
+user         User        @relation(fields:[userId], references:[id])
+type         MessageType  @default(TEXT)
+}
+
+model Participant{
+id           String       @id @default(cuid())
+userId       String
+
+user         User        @relation(fields:[userId], references:[id])
+conversationId String
+conversation Conversation @relation(fields: [conversationId], references: [id])
+
+role         String?
+joinedAt     DateTime  @default(now())
+leftAt       DateTime?
+
+@@unique([conversationId, userId])
+
+}
+
+enum MessageType {
+TEXT
+IMAGE
+FILE
 }

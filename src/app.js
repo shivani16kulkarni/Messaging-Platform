@@ -2,7 +2,9 @@ import express from "express";
 import logger from "#middleware/logger.js";
 import errorHandler from "#middleware/errorHandler.js";
 import authRoutes from "#routes/auth.js";
-import userRoutes from "#routes/users.js";
+import userRoutes from "#routes/user.js";
+import conversationRoutes from "#routes/conversation.js";
+import { createPaginationMiddleware } from "./middleware/pagination.js";
 const app = express();
 
 app.use(logger);
@@ -17,7 +19,8 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
+app.use("/user", userRoutes);
+app.use("/conversations", conversationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not Found" });
