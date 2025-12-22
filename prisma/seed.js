@@ -3,21 +3,63 @@ import bcrypt from "bcrypt";
 import { prisma } from "#db/prismaClient.js";
 
 async function main() {
-  const displayName = "Test User 1";
-  const email = "example-email@example.com";
-  const password = "password123";
+  const passwordHash = await bcrypt.hash("password123", 10);
 
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
+  const user1 = await prisma.user.upsert({
+    where: { email: "user1@example.com" },
+    update: {},
+    create: {
+      email: "user1@example.com",
+      displayName: "Test User 1",
+      passwordHash,
+    },
   });
-  if (!existingUser) {
-    const passwordHash = await bcrypt.hash(password, 10);
-    await prisma.user.create({ data: { email, passwordHash, displayName } });
-    console.log("Seeded: Test User");
-  } else {
-    console.log("User already exists");
-  }
+
+  const user2 = await prisma.user.upsert({
+    where: { email: "user2@example.com" },
+    update: {},
+    create: {
+      email: "user2@example.com",
+      displayName: "Test User 2",
+      passwordHash,
+    },
+  });
+
+  console.log("Seeded users");
+
+  const conversation = await prisma.conversation.create({
+    data: {
+      participants: {
+        connect: [{ id: user1.id }, { id: user2.id }],
+      },
+    },
+  });
+
+  console.log("Seeded conversation");
+
+  await prisma.message.createMany({
+    data: [
+      {
+        content: "Hey!",
+        senderId: user1.id,
+        conversationId: conversation.id,
+      },
+      {
+        content: "Hi, how are you?",
+        senderId: user2.id,
+        conversationId: conversation.id,
+      },
+      {
+        content: "All good. Testing messages.",
+        senderId: user1.id,
+        conversationId: conversation.id,
+      },
+    ],
+  });
+
+  console.log("Seeded messages");
 }
+
 await main()
   .catch((err) => {
     console.error(err);

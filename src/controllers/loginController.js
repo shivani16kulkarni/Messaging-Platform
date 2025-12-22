@@ -6,11 +6,14 @@ import crypto from "crypto";
 
 export default async function loginController(req, res) {
   try {
-    const { email, password } = req.body ?? {};
+    const { email, password } = req.validated ?? {};
 
     if (!email || !password) {
       return res.status(400).json({
-        error: "email and password are required",
+        success: false,
+        error: {
+          message: "email and password are required",
+        },
       });
     }
 
@@ -19,7 +22,10 @@ export default async function loginController(req, res) {
     });
     if (!user) {
       return res.status(401).json({
-        message: "Incorrect password or email",
+        success: false,
+        error: {
+          message: "Incorrect password or email",
+        },
       });
     } else {
       const verify = await bcrypt.compare(password, user.passwordHash);
@@ -50,12 +56,18 @@ export default async function loginController(req, res) {
           })
           .status(200)
           .json({
-            accessToken: newAccessToken,
-            message: `Welcome ${user.displayName}`,
+            success: true,
+            data: {
+              accessToken: newAccessToken,
+              message: `Welcome ${user.displayName}`,
+            },
           });
       } else {
         return res.status(401).json({
-          message: "Incorrect password or email",
+          success: false,
+          error: {
+            message: "Incorrect password or email",
+          },
         });
       }
     }
@@ -63,7 +75,10 @@ export default async function loginController(req, res) {
     console.error("Error in loginController:", err);
 
     return res.status(500).json({
-      error: "Internal server error",
+      success: false,
+      error: {
+        message: "Internal server error",
+      },
     });
   }
 }

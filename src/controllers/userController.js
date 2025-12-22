@@ -9,13 +9,19 @@ export async function getMeController(req, res) {
       email: user.email,
     };
     return res.status(200).json({
-      userDetails,
+      success: true,
+      data: {
+        userDetails,
+      },
     });
   } catch (err) {
     console.error("Error in getMeController:", err);
 
     return res.status(500).json({
-      error: "Internal server error",
+      success: false,
+      error: {
+        message: "Internal server error",
+      },
     });
   }
 }
@@ -30,13 +36,19 @@ export async function getUserListController(req, res) {
     });
 
     return res.status(200).json({
-      users,
+      success: true,
+      data: {
+        users,
+      },
     });
   } catch (err) {
     console.error("Error in getUserListController:", err);
 
     return res.status(500).json({
-      error: "Internal server error",
+      success: false,
+      error: {
+        message: "Internal server error",
+      },
     });
   }
 }
