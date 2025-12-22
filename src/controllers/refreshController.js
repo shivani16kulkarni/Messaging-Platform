@@ -8,7 +8,10 @@ export default async function refreshController(req, res) {
     const requestToken = req.cookies?.refreshToken;
     if (!requestToken) {
       return res.status(401).json({
-        error: "No credentials provided",
+        success: false,
+        error: {
+          message: "No credentials provided",
+        },
       });
     }
     const tokenRecord = await prisma.refreshToken.findUnique({
@@ -17,7 +20,10 @@ export default async function refreshController(req, res) {
     });
     if (!tokenRecord) {
       return res.status(401).json({
-        error: "Invalid refresh token",
+        success: false,
+        error: {
+          message: "Invalid refresh token",
+        },
       });
     }
     if (tokenRecord.revokedAt) {
@@ -25,11 +31,16 @@ export default async function refreshController(req, res) {
         where: { userId: tokenRecord.userId },
       });
       return res.status(403).json({
-        error: "Refresh token revoked",
+        success: false,
+        error: {
+          message: "Refresh token revoked",
+        },
       });
     }
     if (tokenRecord.expiresAt < new Date()) {
-      return res.status(403).json({ error: "Refresh token expired" });
+      return res
+        .status(403)
+        .json({ success: false, error: { message: "Refresh token expired" } });
     }
     const newAccessToken = jsonwebtoken.sign(
       { sub: tokenRecord.user.id },
@@ -64,13 +75,19 @@ export default async function refreshController(req, res) {
       })
       .status(200)
       .json({
-        accessToken: newAccessToken,
+        success: true,
+        data: {
+          accessToken: newAccessToken,
+        },
       });
   } catch (err) {
     console.error("Error in refreshController:", err);
 
     return res.status(500).json({
-      error: "Internal server error",
+      success: false,
+      error: {
+        message: "Internal server error",
+      },
     });
   }
 }

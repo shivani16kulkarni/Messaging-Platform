@@ -5,12 +5,20 @@ export async function postMessageController(req, res) {
     const conversationId = req.params.id;
 
     if (!conversationId) {
-      return res.status(400).json({ message: "conversationId is required" });
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: "conversationId is required",
+        },
+      });
     }
 
     const message = req.body.text;
     if (!message) {
-      return res.status(400).json({ message: "message text is required" });
+      return res.status(400).json({
+        success: false,
+        error: { message: "message text is required" },
+      });
     }
 
     const userId = req.user.id;
@@ -25,7 +33,9 @@ export async function postMessageController(req, res) {
     });
 
     if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
+      return res
+        .status(404)
+        .json({ success: false, error: { message: "Conversation not found" } });
     }
 
     const newMessage = await prisma.message.create({
@@ -37,11 +47,16 @@ export async function postMessageController(req, res) {
     });
 
     return res.status(201).json({
-      message: newMessage,
+      success: true,
+      data: {
+        message: newMessage,
+      },
     });
   } catch (err) {
     console.error("Error in postMessageHandler:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, error: { message: "Internal server error" } });
   }
 }
 
@@ -50,7 +65,10 @@ export async function getMessagesController(req, res) {
     const conversationId = req.params.id;
 
     if (!conversationId) {
-      return res.status(400).json({ message: "conversationId is required" });
+      return res.status(400).json({
+        success: false,
+        error: { message: "conversationId is required" },
+      });
     }
 
     const userId = req.user.id;
@@ -65,7 +83,9 @@ export async function getMessagesController(req, res) {
     });
 
     if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
+      return res
+        .status(404)
+        .json({ success: false, error: { message: "Conversation not found" } });
     }
 
     const { limit, cursor, direction } = req.pagination;
@@ -92,8 +112,11 @@ export async function getMessagesController(req, res) {
       const hasNewer = false;
 
       return res.status(200).json({
-        messages,
-        pageInfo: { olderCursor, newerCursor, hasOlder, hasNewer, limit },
+        success: true,
+        data: {
+          messages,
+          pageInfo: { olderCursor, newerCursor, hasOlder, hasNewer, limit },
+        },
       });
     }
     if (direction === "Older") {
@@ -111,8 +134,11 @@ export async function getMessagesController(req, res) {
       const hasNewer = true;
 
       return res.status(200).json({
-        messages,
-        pageInfo: { olderCursor, newerCursor, hasOlder, hasNewer, limit },
+        success: true,
+        data: {
+          messages,
+          pageInfo: { olderCursor, newerCursor, hasOlder, hasNewer, limit },
+        },
       });
     }
     if (direction === "Newer") {
@@ -130,12 +156,18 @@ export async function getMessagesController(req, res) {
       const hasNewer = messages.length === limit;
 
       return res.status(200).json({
-        messages,
-        pageInfo: { olderCursor, newerCursor, hasOlder, hasNewer, limit },
+        success: true,
+        data: {
+          messages,
+          pageInfo: { olderCursor, newerCursor, hasOlder, hasNewer, limit },
+        },
       });
     }
   } catch (err) {
     console.error("Error in postMessageHandler:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({
+      success: false,
+      error: { message: "Internal server error" },
+    });
   }
 }

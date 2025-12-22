@@ -1,17 +1,26 @@
-export default function errorHandler(err, req, res) {
-  const status = err.status || err.statusCode || 500;
+export default function errorHandler(err, req, res, next) {
+  const status =
+    Number.isInteger(err.statusCode) && err.statusCode >= 400
+      ? err.statusCode
+      : 500;
 
   const isDev = process.env.NODE_ENV !== "production";
 
   console.error(err);
 
-  const payload = {
-    error: err.message || "Internal Server Error",
+  const error = {
+    message:
+      status === 500
+        ? "Internal Server Error"
+        : err.message || "Something went wrong",
   };
 
   if (isDev && err.stack) {
-    payload.stack = err.stack.split("\n").map((line) => line.trim());
+    error.stack = err.stack.split("\n").map((line) => line.trim());
   }
 
-  res.status(status).json(payload);
+  res.status(status).json({
+    success: false,
+    error,
+  });
 }

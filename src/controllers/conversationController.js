@@ -3,13 +3,21 @@ import { prisma } from "#src/db/prismaClient.js";
 export async function postConversationController(req, res) {
   try {
     const userId1 = req.user.id;
-    const userId2 = req.body.userId;
+    const userId2 = req.validate.userId;
 
     if (!userId1) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({
+        success: false,
+        error: {
+          message: "Unauthorized",
+        },
+      });
     }
     if (!userId2) {
-      return res.status(400).json({ message: "userId is required" });
+      return res.status(400).json({
+        success: false,
+        error: { message: "userId is required" },
+      });
     }
 
     const otherUserExists = await prisma.user.findFirst({
@@ -17,13 +25,16 @@ export async function postConversationController(req, res) {
     });
 
     if (userId1 === userId2) {
-      return res
-        .status(400)
-        .json({ message: "Cannot create a conversation with yourself" });
+      return res.status(400).json({
+        success: false,
+        error: { message: "Cannot create a conversation with yourself" },
+      });
     }
 
     if (!otherUserExists) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, error: { message: "User not found" } });
     }
 
     const existingConversation = await prisma.conversation.findFirst({
@@ -62,12 +73,17 @@ export async function postConversationController(req, res) {
       },
     });
     return res.status(201).json({
-      conversation: newConversation,
-      created: true,
+      success: true,
+      data: {
+        conversation: newConversation,
+        created: true,
+      },
     });
   } catch (err) {
     console.error("Error in postConversationController:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, error: { message: "Internal server error" } });
   }
 }
 export async function getConversationsController(req, res) {
@@ -82,11 +98,16 @@ export async function getConversationsController(req, res) {
     });
 
     res.status(200).json({
-      conversations,
+      success: true,
+      data: {
+        conversations,
+      },
     });
   } catch (err) {
     console.error("Error in getConversationsController:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, error: { message: "Internal server error" } });
   }
 }
 
@@ -94,7 +115,10 @@ export async function getConversationMeta(req, res) {
   try {
     const conversationId = req.params.id;
     if (!conversationId) {
-      return res.status(400).json({ message: "conversationId is required" });
+      return res.status(400).json({
+        success: false,
+        error: { message: "conversationId is required" },
+      });
     }
     const conversation = await prisma.conversation.findFirst({
       where: {
@@ -105,13 +129,20 @@ export async function getConversationMeta(req, res) {
       },
     });
     if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
+      return res
+        .status(404)
+        .json({ success: false, error: { message: "Conversation not found" } });
     }
     res.status(200).json({
-      conversation,
+      success: true,
+      data: {
+        conversation,
+      },
     });
   } catch (err) {
     console.error("Error in getConversationsController:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, error: { message: "Internal server error" } });
   }
 }

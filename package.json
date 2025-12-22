@@ -5,6 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
+    "seed": "node prisma/seed.js",
     "dev": "nodemon --watch src src/server.js",
     "start": "node src/server.js",
     "lint": "eslint .",
@@ -35,10 +36,13 @@
     "@prisma/client": "^7.1.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "zod": "^4.1.13"
   },
   "imports": {
     "#src/*": "./src/*",

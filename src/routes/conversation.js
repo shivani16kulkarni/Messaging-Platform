@@ -10,6 +10,9 @@ import {
   getMessagesController,
   postMessageController,
 } from "#src/controllers/messageController.js";
+import { validate } from "#src/middleware/validate.js";
+import { conversationSchema } from "#src/validators/conversationSchema.js";
+import { messageSchema } from "#src/validators/messageSchema.js";
 const router = new Router();
 
 const paginationMiddleware = createPaginationMiddleware({
@@ -19,9 +22,19 @@ const paginationMiddleware = createPaginationMiddleware({
 });
 
 router.get("/", authenticateUser, getConversationsController);
-router.post("/post", authenticateUser, postConversationController);
+router.post(
+  "/post",
+  authenticateUser,
+  validate(conversationSchema),
+  postConversationController
+);
 router.get("/:id", authenticateUser, getConversationMeta);
-router.post("/:id/messages", authenticateUser, postMessageController);
+router.post(
+  "/:id/messages",
+  authenticateUser,
+  validate(messageSchema),
+  postMessageController
+);
 router.get(
   "/:id/messages",
   authenticateUser,

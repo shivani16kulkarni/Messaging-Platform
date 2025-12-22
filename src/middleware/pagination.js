@@ -1,44 +1,44 @@
 export function createPaginationMiddleware({
   defaultLimit = 20,
   maxLimit = 50,
-  allowedDirections = false,
+  allowedDirections = null,
 } = {}) {
-  const direction = allowedDirections ? ["Older", "Newer"] : [];
-
   return function paginationMiddleware(req, res, next) {
-    let rawLimit = req.query.limit;
     let limit = defaultLimit;
-
-    if (rawLimit !== undefined) {
-      const n = Number(rawLimit);
+    if (req.query.limit !== undefined) {
+      const n = Number(req.query.limit);
       if (Number.isNaN(n) || n <= 0) {
-        return res
-          .status(400)
-          .json({ message: "limit must be a positive number" });
+        return res.status(400).json({
+          success: false,
+          error: { message: "limit must be a positive number" },
+        });
       }
       limit = Math.min(n, maxLimit);
     }
 
     let cursor = null;
-    const rawCursor = req.query.cursor;
-    if (rawCursor !== undefined) {
-      const c = Number(rawCursor);
+    if (req.query.cursor !== undefined) {
+      const c = Number(req.query.cursor);
       if (Number.isNaN(c) || c <= 0) {
-        return res
-          .status(400)
-          .json({ message: "cursor must be a positive number" });
+        return res.status(400).json({
+          success: false,
+          error: { message: "cursor must be a positive number" },
+        });
       }
       cursor = c;
     }
+
     let direction = null;
-    const rawDirection = req.params.direction;
-    if (allowedDirections && rawDirection !== undefined) {
-      if (!allowedDirections.includes(rawDirection)) {
+    if (Array.isArray(allowedDirections) && req.query.direction !== undefined) {
+      if (!allowedDirections.includes(req.query.direction)) {
         return res.status(400).json({
-          message: `direction must be one of: ${allowedDirections.join(", ")}`,
+          success: false,
+          error: {
+            message: `direction must be one of: ${allowedDirections.join(", ")}`,
+          },
         });
       }
-      direction = rawDirection;
+      direction = req.query.direction;
     }
 
     req.pagination = {
@@ -47,6 +47,6 @@ export function createPaginationMiddleware({
       direction,
     };
 
-    return next();
+    next();
   };
 }
