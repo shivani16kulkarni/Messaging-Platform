@@ -3,7 +3,7 @@ import { prisma } from "#src/db/prismaClient.js";
 export async function postConversationController(req, res) {
   try {
     const userId1 = req.user.id;
-    const userId2 = req.validate.userId;
+    const userId2 = req.validated.userId;
 
     if (!userId1) {
       return res.status(401).json({
@@ -20,9 +20,11 @@ export async function postConversationController(req, res) {
       });
     }
 
+    console.log("prisma probably throws here");
     const otherUserExists = await prisma.user.findFirst({
       where: { id: userId2 },
     });
+    console.log("reaches here");
 
     if (userId1 === userId2) {
       return res.status(400).json({
