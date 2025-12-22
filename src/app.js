@@ -5,6 +5,7 @@ import authRoutes from "#routes/auth.js";
 import userRoutes from "#routes/user.js";
 import conversationRoutes from "#routes/conversation.js";
 import helmet from "helmet";
+import cors from "cors";
 const app = express();
 
 app.use(logger);

@@ -1,12 +1,12 @@
-const rateLimiter = new Map();
-export function rateLimiter({ key, max, windowMs }) {
+const rateLimitStore = new Map();
+export function rateLimiter({ keyGenerator, max, windowMs }) {
   return (req, res, next) => {
     const key = keyGenerator(req);
     const now = Date.now();
-    const entry = rateLimiter.get(key);
+    const entry = rateLimitStore.get(key);
 
     if (!entry || entry.expiresAt < now) {
-      rateLimiter.set(key, {
+      rateLimitStore.set(key, {
         expiresAt: now + windowMs,
         count: 1,
       });
