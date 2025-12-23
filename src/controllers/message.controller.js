@@ -1,6 +1,6 @@
 import { prisma } from "#src/db/prismaClient.js";
 
-export async function postMessageController(req, res) {
+export async function postMessage(req, res) {
   try {
     const conversationId = req.params.id;
 
@@ -60,7 +60,7 @@ export async function postMessageController(req, res) {
   }
 }
 
-export async function getMessagesController(req, res) {
+export async function getMessages(req, res) {
   try {
     const conversationId = req.params.id;
 
