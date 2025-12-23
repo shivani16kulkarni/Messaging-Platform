@@ -1,6 +1,6 @@
 import { prisma } from "#src/db/prismaClient.js";
 
-export async function postConversationController(req, res) {
+export async function postConversation(req, res) {
   try {
     const userId1 = req.user.id;
     const userId2 = req.validated.userId;
@@ -82,13 +82,13 @@ export async function postConversationController(req, res) {
       },
     });
   } catch (err) {
-    console.error("Error in postConversationController:", err);
+    console.error("Error in postConversation:", err);
     return res
       .status(500)
       .json({ success: false, error: { message: "Internal server error" } });
   }
 }
-export async function getConversationsController(req, res) {
+export async function getConversations(req, res) {
   try {
     const userId = req.user.id;
 
@@ -106,7 +106,7 @@ export async function getConversationsController(req, res) {
       },
     });
   } catch (err) {
-    console.error("Error in getConversationsController:", err);
+    console.error("Error in getConversations:", err);
     return res
       .status(500)
       .json({ success: false, error: { message: "Internal server error" } });
@@ -142,7 +142,7 @@ export async function getConversationMeta(req, res) {
       },
     });
   } catch (err) {
-    console.error("Error in getConversationsController:", err);
+    console.error("Error in getConversations:", err);
     return res
       .status(500)
       .json({ success: false, error: { message: "Internal server error" } });

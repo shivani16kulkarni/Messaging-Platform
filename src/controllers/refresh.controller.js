@@ -3,7 +3,7 @@ import jsonwebtoken from "jsonwebtoken";
 import crypto from "crypto";
 
 import "dotenv/config";
-export default async function refreshController(req, res) {
+export default async function refresh(req, res) {
   try {
     const requestToken = req.cookies?.refreshToken;
     if (!requestToken) {
@@ -81,7 +81,7 @@ export default async function refreshController(req, res) {
         },
       });
   } catch (err) {
-    console.error("Error in refreshController:", err);
+    console.error("Error in refresh:", err);
 
     return res.status(500).json({
       success: false,

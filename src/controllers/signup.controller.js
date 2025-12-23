@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { prisma } from "#db/prismaClient.js";
-export default async function signUpController(req, res) {
+import { generateSendOtp } from "#src/services/otp.service.js";
+export default async function signup(req, res) {
   try {
     const { name: displayName, email, password } = req.validated ?? {};
 
@@ -32,17 +33,21 @@ export default async function signUpController(req, res) {
           displayName,
         },
       });
+
+      await generateSendOtp(user.id, user.email, "SIGNUP");
+
       return res.status(201).json({
         success: true,
         data: {
-          id: user.id,
-          email: user.email,
-          displayName: user.displayName,
+          message: "Otp sent",
+          data: {
+            userId: user.id,
+          },
         },
       });
     }
   } catch (err) {
-    console.error("Error in signUpController:", err);
+    console.error("Error in signUp:", err);
 
     return res.status(500).json({
       success: false,

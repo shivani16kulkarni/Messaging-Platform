@@ -12,6 +12,7 @@ async function main() {
       email: "user1@example.com",
       displayName: "Test User 1",
       passwordHash,
+      emailVerifiedAt: new Date(),
     },
   });
 
@@ -22,6 +23,7 @@ async function main() {
       email: "user2@example.com",
       displayName: "Test User 2",
       passwordHash,
+      emailVerifiedAt: new Date(),
     },
   });
 

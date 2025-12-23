@@ -1,6 +1,6 @@
 import { prisma } from "#src/db/prismaClient.js";
 
-export async function getMeController(req, res) {
+export async function getMe(req, res) {
   try {
     const userId = req.user.id;
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -15,7 +15,7 @@ export async function getMeController(req, res) {
       },
     });
   } catch (err) {
-    console.error("Error in getMeController:", err);
+    console.error("Error in getMe:", err);
 
     return res.status(500).json({
       success: false,
@@ -25,7 +25,7 @@ export async function getMeController(req, res) {
     });
   }
 }
-export async function getUserListController(req, res) {
+export async function getUserList(req, res) {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -42,7 +42,7 @@ export async function getUserListController(req, res) {
       },
     });
   } catch (err) {
-    console.error("Error in getUserListController:", err);
+    console.error("Error in getUserList:", err);
 
     return res.status(500).json({
       success: false,

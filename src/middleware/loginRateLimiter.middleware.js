@@ -1,4 +1,4 @@
-import { rateLimiter } from "#src/middleware/rateLimiter.js";
+import { rateLimiter } from "#src/middleware/rateLimiter.middleware.js";
 
 export const loginRateLimiter = rateLimiter({
   windowMs: 10 * 60 * 1000,
