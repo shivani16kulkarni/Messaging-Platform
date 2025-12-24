@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import { prisma } from "#db/prismaClient.js";
-import { auth } from "#services/auth.service.js";
+import {
+  createAccessToken,
+  createRefreshToken,
+  createSession,
+} from "#src/services/auth.service.js";
 
 export default async function login(req, res) {
   try {
@@ -34,7 +38,9 @@ export default async function login(req, res) {
       const verify = await bcrypt.compare(password, user.passwordHash);
 
       if (verify) {
-        await auth(user, res);
+        const newAccessToken = await createAccessToken(user.id);
+        const newRefreshToken = await createRefreshToken(user.id);
+        await createSession(res, newAccessToken, newRefreshToken);
 
         return res.status(200).json({
           success: true,

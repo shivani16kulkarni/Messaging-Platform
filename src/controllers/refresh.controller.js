@@ -1,6 +1,9 @@
 import { prisma } from "#db/prismaClient.js";
-import jsonwebtoken from "jsonwebtoken";
-import crypto from "crypto";
+import {
+  createAccessToken,
+  createRefreshToken,
+  createSession,
+} from "#src/services/auth.service.js";
 
 import "dotenv/config";
 export default async function refresh(req, res) {
@@ -42,22 +45,10 @@ export default async function refresh(req, res) {
         .status(403)
         .json({ success: false, error: { message: "Refresh token expired" } });
     }
-    const newAccessToken = jsonwebtoken.sign(
-      { sub: tokenRecord.user.id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
 
-    const token = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    const newRefreshToken = await prisma.refreshToken.create({
-      data: {
-        token,
-        userId: tokenRecord.user.id,
-        expiresAt,
-      },
-    });
-
+    const newAccessToken = await createAccessToken(userId);
+    const newRefreshToken = await createRefreshToken(userId);
+    await createSession(res, newAccessToken, newRefreshToken);
     await prisma.refreshToken.update({
       where: { token: requestToken },
       data: {
@@ -66,20 +57,9 @@ export default async function refresh(req, res) {
         replacedBy: newRefreshToken.token,
       },
     });
-    return res
-      .cookie("refreshToken", newRefreshToken.token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      })
-      .status(200)
-      .json({
-        success: true,
-        data: {
-          accessToken: newAccessToken,
-        },
-      });
+    return res.status(200).json({
+      success: true,
+    });
   } catch (err) {
     console.error("Error in refresh:", err);
 

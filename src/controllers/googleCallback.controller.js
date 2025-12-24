@@ -1,6 +1,10 @@
 import axios from "axios";
 import { prisma } from "#db/prismaClient.js";
-import { auth } from "#services/auth.service.js";
+import {
+  createAccessToken,
+  createRefreshToken,
+  createSession,
+} from "#src/services/auth.service.js";
 export async function googleCallback(req, res) {
   try {
     const { code } = req.query;
@@ -58,8 +62,9 @@ export async function googleCallback(req, res) {
         },
       });
     }
-    await auth(user, res);
-
+    const newAccessToken = await createAccessToken(user.id);
+    const newRefreshToken = await createRefreshToken(user.id);
+    await createSession(res, newAccessToken, newRefreshToken);
     return res
       .status(200)
       .send("<h1>Google Login Successful</h1><p>You can close this tab.</p>");
