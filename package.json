@@ -1,0 +1,25 @@
+{
+  "name": "messaging-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd backend && npm run dev",
+    "dev:web": "cd frontend && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shivani16kulkarni/Messaging-Platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shivani16kulkarni/Messaging-Platform/issues"
+  },
+  "homepage": "https://github.com/shivani16kulkarni/Messaging-Platform#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
